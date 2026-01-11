@@ -84,7 +84,7 @@ Today this happens via:
 
 | 💼 FedEx Team | 🧑‍💼 DCAs | 🧑‍💻 Admin |
 |:---:|:---:|:---:|
-| Controls workflow | Resolves cases | Tracks performance |
+| Controls workflow | Resolves cases | Controls visibility |
 
 </div>
 
