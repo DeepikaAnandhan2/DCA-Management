@@ -162,19 +162,9 @@ A unified dashboard for complete recovery visibility.
 
 
 ---
-## 🛠️ **Tech Stack**
+## 🛠️ **WorkFlow**
 
-```mermaid
-graph TB
-    A[FedEx ERP & Billing] --> B[RPA Data Sync]
-    B --> C[FastAPI Backend]
-    C --> D[AI Prioritization Engine]
-    C --> E[PostgreSQL]
-    C --> F[DCA Portal]
-    C --> G[FedEx Dashboard]
-    F --> C
-    G --> C
+<img width="1646" height="780" alt="image" src="https://github.com/user-attachments/assets/86abd826-a11f-4e18-a775-004c32274ea1" />
 
-```
 
 </div>
