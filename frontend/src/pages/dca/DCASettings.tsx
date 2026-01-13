@@ -10,8 +10,7 @@ import {
   Globe, 
   Save,
   CheckCircle2
-}
- from 'lucide-react';
+}from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export const DCASettings: React.FC = () => {
