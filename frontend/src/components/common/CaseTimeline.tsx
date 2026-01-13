@@ -7,6 +7,7 @@ interface CaseTimelineProps {
   events: TimelineEvent[];
 }
 
+
 export const CaseTimeline: React.FC<CaseTimelineProps> = ({ events }) => {
   return (
     <div className="space-y-6 relative before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-[2px] before:bg-slate-100">
@@ -32,6 +33,7 @@ export const CaseTimeline: React.FC<CaseTimelineProps> = ({ events }) => {
           </div>
         </div>
       ))}
+      
     </div>
   );
 };

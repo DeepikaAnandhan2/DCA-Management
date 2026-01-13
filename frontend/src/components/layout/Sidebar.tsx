@@ -57,6 +57,7 @@ export const Sidebar: React.FC = () => {
           <Settings size={20} /> Settings
         </NavLink>
       </nav>
+      
 
       <div className="p-4 border-t border-white/10">
         <button onClick={handleLogout} className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-white/60 hover:bg-white/5 hover:text-white transition-colors">

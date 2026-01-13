@@ -16,6 +16,7 @@ export const DCACaseDetail: React.FC = () => {
   if (!caseData) return <div className="p-10 text-center font-bold">Case not found</div>;
 
   const handleMarkAsPaid = () => {
+
     setShowPaidSuccess(true);
     setTimeout(() => setShowPaidSuccess(false), 3000);
   };
@@ -116,6 +117,7 @@ export const DCACaseDetail: React.FC = () => {
             </div>
           </div>
         </div>
+        
       )}
     </div>
   );

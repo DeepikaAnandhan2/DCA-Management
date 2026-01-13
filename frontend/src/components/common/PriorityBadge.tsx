@@ -27,6 +27,7 @@ export const PriorityBadge: React.FC<PriorityBadgeProps> = ({ priority, showIcon
     },
   };
 
+
   const { className, icon: Icon, label } = config[priority];
 
   return (

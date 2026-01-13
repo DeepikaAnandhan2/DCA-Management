@@ -64,6 +64,7 @@ export const DCADashboard: React.FC = () => {
                   <td className="px-8 py-5"><StatusBadge status={c.status} /></td>
                 </tr>
               ))}
+              
             </tbody>
           </table>
         </div>

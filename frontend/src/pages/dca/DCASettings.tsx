@@ -115,6 +115,7 @@ export const DCASettings: React.FC = () => {
               </div>
             </div>
           )}
+          
 
           {activeTab === 'notifications' && (
             <div className="p-8 space-y-6 animate-in fade-in slide-in-from-right-4">

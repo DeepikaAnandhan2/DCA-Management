@@ -36,4 +36,5 @@ export interface Case {
   createdAt: string;
   notes: string[];
   timeline: TimelineEvent[];
+  
 }
