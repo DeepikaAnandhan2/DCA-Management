@@ -8,3 +8,6 @@ class DCAAgency(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, nullable=True)
     email = Column(String, nullable=True)
+
+    location = Column(String, nullable=False)
+

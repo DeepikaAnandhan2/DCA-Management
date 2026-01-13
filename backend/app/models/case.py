@@ -9,6 +9,7 @@ class Case(Base):
     title = Column(String, nullable=False)
 
     status = Column(String, default="PENDING_APPROVAL")
+    priority = Column(String, default="LOW")
 
     assigned_to = Column(Integer, ForeignKey("dca_agencies.id"), nullable=True)
 
