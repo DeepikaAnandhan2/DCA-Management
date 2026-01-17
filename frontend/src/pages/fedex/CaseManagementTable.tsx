@@ -1,15 +1,4 @@
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Chip,
-  Typography,
-  IconButton,
-} from "@mui/material";
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
+import { MoreHorizontal } from "lucide-react";
 
 const rows = [
   {
@@ -80,25 +69,25 @@ const rows = [
   },
 ];
 
-const priorityStyle = {
-  High: { bgcolor: "#fdecea", color: "#d32f2f" },
-  Medium: { bgcolor: "#fff4e5", color: "#ef6c00" },
-  Low: { bgcolor: "#e8f5e9", color: "#2e7d32" },
+const priorityClass: Record<string, string> = {
+  High: "bg-red-50 text-red-700",
+  Medium: "bg-orange-50 text-orange-700",
+  Low: "bg-green-50 text-green-700",
 };
 
-const statusStyle = {
-  Open: { bgcolor: "#e3f2fd", color: "#1565c0" },
-  Approved: { bgcolor: "#e8f5e9", color: "#2e7d32" },
-  Assigned: { bgcolor: "#ede7f6", color: "#6a1b9a" },
-  Closed: { bgcolor: "#f5f5f5", color: "#424242" },
+const statusClass: Record<string, string> = {
+  Open: "bg-blue-50 text-blue-700",
+  Approved: "bg-green-50 text-green-700",
+  Assigned: "bg-purple-50 text-purple-700",
+  Closed: "bg-gray-100 text-gray-700",
 };
 
 export default function CaseTable() {
   return (
-    <TableContainer>
-      <Table>
-        <TableHead>
-          <TableRow>
+    <div className="overflow-x-auto">
+      <table className="w-full border-collapse">
+        <thead className="bg-gray-50">
+          <tr>
             {[
               "CASE ID",
               "INVOICE ID",
@@ -111,68 +100,84 @@ export default function CaseTable() {
               "SLA DUE DATE",
               "ACTIONS",
             ].map((h) => (
-              <TableCell key={h}>
-                <Typography fontSize={13} fontWeight={600} color="text.secondary">
-                  {h}
-                </Typography>
-              </TableCell>
+              <th
+                key={h}
+                className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500"
+              >
+                {h}
+              </th>
             ))}
-          </TableRow>
-        </TableHead>
+          </tr>
+        </thead>
 
-        <TableBody>
+        <tbody className="divide-y divide-gray-200 bg-white">
           {rows.map((r) => (
-            <TableRow key={r.caseId}>
-              <TableCell sx={{ color: "#5b2db3", fontWeight: 600 }}>
+            <tr key={r.caseId} className="hover:bg-gray-50">
+              <td className="px-4 py-3 font-semibold text-indigo-700">
                 {r.caseId}
-              </TableCell>
+              </td>
 
-              <TableCell>{r.invoice}</TableCell>
+              <td className="px-4 py-3 text-sm text-gray-700">
+                {r.invoice}
+              </td>
 
-              <TableCell sx={{ fontWeight: 600 }}>
+              <td className="px-4 py-3 font-semibold text-gray-900">
                 {r.customer}
-              </TableCell>
+              </td>
 
-              <TableCell sx={{ fontWeight: 600 }}>
+              <td className="px-4 py-3 font-semibold text-gray-900">
                 {r.amount}
-              </TableCell>
+              </td>
 
-              <TableCell sx={{ color: r.days > 30 ? "red" : "inherit" }}>
+              <td
+                className={`px-4 py-3 text-sm ${
+                  r.days > 30 ? "text-red-600 font-semibold" : "text-gray-700"
+                }`}
+              >
                 {r.days} days
-              </TableCell>
+              </td>
 
-              <TableCell>
-                <Chip
-                  label={r.priority}
-                  size="small"
-                  sx={priorityStyle[r.priority as keyof typeof priorityStyle]}
-                />
-              </TableCell>
+              <td className="px-4 py-3">
+                <span
+                  className={`rounded-full px-2.5 py-1 text-xs font-medium ${
+                    priorityClass[r.priority]
+                  }`}
+                >
+                  {r.priority}
+                </span>
+              </td>
 
-              <TableCell>
-                <Chip
-                  label={r.status}
-                  size="small"
-                  sx={statusStyle[r.status as keyof typeof statusStyle]}
-                />
-              </TableCell>
+              <td className="px-4 py-3">
+                <span
+                  className={`rounded-full px-2.5 py-1 text-xs font-medium ${
+                    statusClass[r.status]
+                  }`}
+                >
+                  {r.status}
+                </span>
+              </td>
 
-              <TableCell>{r.region}</TableCell>
-              <TableCell>{r.sla}</TableCell>
+              <td className="px-4 py-3 text-sm text-gray-700">
+                {r.region}
+              </td>
 
-              <TableCell>
-                <IconButton>
-                  <MoreHorizIcon />
-                </IconButton>
-              </TableCell>
-            </TableRow>
+              <td className="px-4 py-3 text-sm text-gray-700">
+                {r.sla}
+              </td>
+
+              <td className="px-4 py-3 text-right">
+                <button className="rounded-md p-1 hover:bg-gray-100">
+                  <MoreHorizontal className="h-5 w-5 text-gray-500" />
+                </button>
+              </td>
+            </tr>
           ))}
-        </TableBody>
-      </Table>
+        </tbody>
+      </table>
 
-      <Typography p={2} fontSize={13} color="text.secondary">
-        Showing 6 of 6 cases
-      </Typography>
-    </TableContainer>
+      <div className="px-4 py-3 text-sm text-gray-500">
+        Showing {rows.length} of {rows.length} cases
+      </div>
+    </div>
   );
 }

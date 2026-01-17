@@ -5,7 +5,6 @@ import {
   ResponsiveContainer,
   Legend,
 } from "recharts";
-import { Paper, Typography, Box } from "@mui/material";
 
 const data = [
   { name: "High", value: 22 },
@@ -17,12 +16,14 @@ const COLORS = ["#f44336", "#ff9800", "#4caf50"];
 
 export default function PriorityDonutChart() {
   return (
-    <Paper sx={{ p: 3, height: 360, borderRadius: 3 }}>
-      <Typography fontWeight={600} mb={2}>
+    <div className="h-[360px] rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+      {/* Title */}
+      <h3 className="mb-4 text-sm font-semibold text-gray-800">
         Case Distribution by Priority
-      </Typography>
+      </h3>
 
-      <Box width="100%" height={280}>
+      {/* Chart */}
+      <div className="h-[280px] w-full">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
@@ -36,10 +37,11 @@ export default function PriorityDonutChart() {
                 <Cell key={index} fill={COLORS[index]} />
               ))}
             </Pie>
+
             <Legend verticalAlign="bottom" />
           </PieChart>
         </ResponsiveContainer>
-      </Box>
-    </Paper>
+      </div>
+    </div>
   );
 }

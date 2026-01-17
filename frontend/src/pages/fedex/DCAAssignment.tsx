@@ -1,10 +1,4 @@
-import {
-  Box,
-  Typography,
-  Grid,
-  Button,
-} from "@mui/material";
-import RefreshIcon from "@mui/icons-material/Refresh";
+import { RefreshCw } from "lucide-react";
 
 import DCAStatCard from "../../components/fedex/DCAStatCard";
 import DCACard from "../../components/fedex/DCACard";
@@ -12,62 +6,53 @@ import { dcaList } from "../../data/dcas";
 
 export default function DCAAssignment() {
   return (
-    <Box>
+    <div className="space-y-6">
       {/* Header */}
-      <Box display="flex" justifyContent="space-between" mb={3}>
-        <Box>
-          <Typography variant="h5" fontWeight={700}>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-xl font-bold">
             DCA Assignment
-          </Typography>
-          <Typography color="text.secondary">
+          </h1>
+          <p className="text-sm text-gray-500">
             Manage registered DCAs and manually assign cases
-          </Typography>
-        </Box>
+          </p>
+        </div>
 
-        <Button
-          variant="outlined"
-          startIcon={<RefreshIcon />}
-          sx={{ height: 42 }}
+        <button
+          className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium hover:bg-gray-50"
         >
+          <RefreshCw size={16} />
           Refresh List
-        </Button>
-      </Box>
+        </button>
+      </div>
 
-      {/* KPI Cards */}
-      <Grid container spacing={3} mb={4}>
-        <Grid item xs={12} md={4}>
-          <DCAStatCard
-            title="Registered DCAs"
-            value="3"
-            icon="agency"
-          />
-        </Grid>
+      {/* KPI CARDS */}
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <DCAStatCard
+          title="Registered DCAs"
+          value="3"
+          icon="agency"
+        />
 
-        <Grid item xs={12} md={4}>
-          <DCAStatCard
-            title="Total Active Cases"
-            value="25"
-            icon="cases"
-          />
-        </Grid>
+        <DCAStatCard
+          title="Total Active Cases"
+          value="25"
+          icon="cases"
+        />
 
-        <Grid item xs={12} md={4}>
-          <DCAStatCard
-            title="Avg SLA Performance"
-            value="91%"
-            icon="performance"
-          />
-        </Grid>
-      </Grid>
+        <DCAStatCard
+          title="Avg SLA Performance"
+          value="91%"
+          icon="performance"
+        />
+      </div>
 
-      {/* DCA Cards */}
-      <Grid container spacing={3}>
+      {/* DCA CARDS */}
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         {dcaList.map((dca) => (
-          <Grid item xs={12} md={4} key={dca.code}>
-            <DCACard dca={dca} />
-          </Grid>
+          <DCACard key={dca.code} dca={dca} />
         ))}
-      </Grid>
-    </Box>
+      </div>
+    </div>
   );
 }

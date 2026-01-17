@@ -1,18 +1,3 @@
-import {
-  Box,
-  Chip,
-  Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Typography,
-  Stack,
-  Button,
-} from "@mui/material";
-
 const rows = [
   {
     id: "CASE-001",
@@ -61,125 +46,109 @@ const rows = [
   },
 ];
 
-const priorityColor = {
-  High: "error",
-  Medium: "warning",
-  Low: "success",
-} as const;
+const priorityStyles: Record<string, string> = {
+  High: "bg-red-100 text-red-700",
+  Medium: "bg-yellow-100 text-yellow-700",
+  Low: "bg-green-100 text-green-700",
+};
 
-const statusColor = {
-  Open: "info",
-  Approved: "success",
-  Assigned: "secondary",
-  Closed: "default",
-} as const;
+const statusStyles: Record<string, string> = {
+  Open: "bg-blue-100 text-blue-700",
+  Approved: "bg-green-100 text-green-700",
+  Assigned: "bg-purple-100 text-purple-700",
+  Closed: "bg-gray-100 text-gray-600",
+};
 
 export default function RecentCasesTable() {
   return (
-   <Paper
-  elevation={0}
-  sx={{
-    mt: 3,
-    width: "100%",
-    borderRadius: 3,
-    border: "1px solid #E5E7EB",
-    backgroundColor: "#fff",
-    overflow: "hidden",
-  }}
->
-      <Box
-  px={3}
-  py={2}
-  display="flex"
-  justifyContent="space-between"
-  alignItems="center"
-  sx={{
-    borderBottom: "1px solid #E5E7EB",
-    background: "#FAFAFB",
-  }}
->
-
-        <Box>
-          <Typography fontWeight={600}>
+    <div className="mt-6 w-full overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+      {/* Header */}
+      <div className="flex items-center justify-between border-b border-gray-200 bg-gray-50 px-6 py-4">
+        <div>
+          <h3 className="text-sm font-semibold text-gray-900">
             Recent AI-Prioritized Cases
-          </Typography>
-          <Typography fontSize={13} color="text.secondary">
+          </h3>
+          <p className="text-xs text-gray-500">
             Latest cases requiring attention
-          </Typography>
-        </Box>
+          </p>
+        </div>
 
-        <Button variant="text" endIcon={<span>→</span>}>
-          View All
-        </Button>
-      </Box>
+        <button className="text-sm font-medium text-indigo-600 hover:underline">
+          View All →
+        </button>
+      </div>
 
-      <TableContainer sx={{ overflowX: "auto" }}>
+      {/* Table */}
+      <div className="overflow-x-auto">
+        <table className="min-w-full border-collapse">
+          <thead className="bg-gray-50">
+            <tr>
+              {[
+                "CASE ID",
+                "CUSTOMER",
+                "AMOUNT DUE",
+                "OVERDUE DAYS",
+                "AI PRIORITY",
+                "STATUS",
+                "SLA DUE",
+              ].map((h) => (
+                <th
+                  key={h}
+                  className="px-6 py-3 text-left text-xs font-bold uppercase tracking-wider text-gray-500"
+                >
+                  {h}
+                </th>
+              ))}
+            </tr>
+          </thead>
 
-        <Table sx={{ width: "100%" }}>
-
-        <TableHead sx={{ backgroundColor: "#F9FAFB" }}>
-  <TableRow>
-    {[
-      "CASE ID",
-      "CUSTOMER",
-      "AMOUNT DUE",
-      "OVERDUE DAYS",
-      "AI PRIORITY",
-      "STATUS",
-      "SLA DUE",
-    ].map((h) => (
-      <TableCell
-        key={h}
-        sx={{
-          fontSize: "12px",
-          fontWeight: 700,
-          color: "#6B7280",
-          letterSpacing: "0.04em",
-        }}
-      >
-        {h}
-      </TableCell>
-    ))}
-  </TableRow>
-</TableHead>
-
-
-          <TableBody>
+          <tbody className="divide-y divide-gray-200">
             {rows.map((r) => (
-              <TableRow key={r.id}>
-                <TableCell sx={{ color: "#5b2db3", fontWeight: 600 }}>
+              <tr key={r.id} className="hover:bg-gray-50">
+                <td className="px-6 py-4 text-sm font-semibold text-indigo-600">
                   {r.id}
-                </TableCell>
-                <TableCell>{r.customer}</TableCell>
-                <TableCell sx={{ fontWeight: 600 }}>{r.amount}</TableCell>
+                </td>
 
-                <TableCell sx={{ color: r.days > 30 ? "red" : "inherit" }}>
+                <td className="px-6 py-4 text-sm text-gray-800">
+                  {r.customer}
+                </td>
+
+                <td className="px-6 py-4 text-sm font-semibold text-gray-900">
+                  {r.amount}
+                </td>
+
+                <td
+                  className={`px-6 py-4 text-sm font-medium ${
+                    r.days > 30 ? "text-red-600" : "text-gray-700"
+                  }`}
+                >
                   {r.days} days
-                </TableCell>
+                </td>
 
-                <TableCell>
-                  <Chip
-                    label={r.priority}
-                    color={priorityColor[r.priority]}
-                    size="small"
-                  />
-                </TableCell>
+                <td className="px-6 py-4">
+                  <span
+                    className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${priorityStyles[r.priority]}`}
+                  >
+                    {r.priority}
+                  </span>
+                </td>
 
-                <TableCell>
-                  <Chip
-                    label={r.status}
-                    color={statusColor[r.status]}
-                    size="small"
-                    variant="soft"
-                  />
-                </TableCell>
+                <td className="px-6 py-4">
+                  <span
+                    className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${statusStyles[r.status]}`}
+                  >
+                    {r.status}
+                  </span>
+                </td>
 
-                <TableCell>{r.sla}</TableCell>
-              </TableRow>
+                <td className="px-6 py-4 text-sm text-gray-700">
+                  {r.sla}
+                </td>
+              </tr>
             ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </Paper>
+          </tbody>
+        </table>
+      </div>
+    </div>
   );
 }

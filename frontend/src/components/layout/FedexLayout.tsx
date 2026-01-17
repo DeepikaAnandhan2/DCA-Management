@@ -5,16 +5,16 @@ export default function FedexLayout() {
   const location = useLocation();
 
   return (
-    <div className="flex min-h-screen w-full">
-      {/* Fixed Sidebar */}
-      <aside className="fixed left-0 top-0 h-screen w-[260px] bg-purple-900">
+    <div className="flex min-h-screen w-full bg-[#F6F7FB]">
+      {/* Sidebar */}
+      <aside className="fixed inset-y-0 left-0 w-[260px]">
         <Sidebar />
       </aside>
 
-      {/* Scrollable Content */}
+      {/* Main Content */}
       <main
         key={location.pathname}
-        className="ml-[260px] min-h-screen flex-1 bg-[#F6F7FB] p-6 overflow-y-auto"
+        className="ml-[260px] flex-1 overflow-y-auto p-6"
       >
         <Outlet />
       </main>

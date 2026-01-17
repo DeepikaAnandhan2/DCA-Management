@@ -1,51 +1,36 @@
-import {
-  Box,
-  Typography,
-  Button,
-  Paper,
-  Stack,
-} from "@mui/material";
-import DownloadIcon from "@mui/icons-material/Download";
+import { Download } from "lucide-react";
 import CaseFilters from "./CaseManagementFilter";
 import CaseTable from "./CaseManagementTable";
 
 export default function CaseManagement() {
   return (
-    <Box sx={{ p: 4, backgroundColor: "#f7f8fb", minHeight: "100vh" }}>
+    <div className="min-h-screen bg-[#f7f8fb] p-6">
       {/* Header */}
-      <Stack
-        direction="row"
-        justifyContent="space-between"
-        alignItems="center"
-        mb={3}
-      >
-        <Box>
-          <Typography fontSize={26} fontWeight={700}>
+      <div className="mb-6 flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">
             Case Management
-          </Typography>
-          <Typography color="text.secondary">
+          </h1>
+          <p className="text-sm text-gray-500">
             Manage and assign overdue invoice cases
-          </Typography>
-        </Box>
+          </p>
+        </div>
 
-        <Button
-          variant="outlined"
-          startIcon={<DownloadIcon />}
-          sx={{ borderRadius: 2, textTransform: "none" }}
-        >
+        <button className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
+          <Download className="h-4 w-4" />
           Export Report
-        </Button>
-      </Stack>
+        </button>
+      </div>
 
       {/* Filters */}
-      <Paper sx={{ p: 2.5, borderRadius: 3, mb: 3 }}>
+      <div className="mb-6 rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
         <CaseFilters />
-      </Paper>
+      </div>
 
       {/* Table */}
-      <Paper sx={{ borderRadius: 3 }}>
+      <div className="rounded-xl border border-gray-200 bg-white shadow-sm">
         <CaseTable />
-      </Paper>
-    </Box>
+      </div>
+    </div>
   );
 }

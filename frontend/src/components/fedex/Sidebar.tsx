@@ -1,18 +1,10 @@
 import {
-  Box,
-  Typography,
-  List,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Avatar,
-  Divider,
-} from "@mui/material";
-import DashboardIcon from "@mui/icons-material/Dashboard";
-import AssignmentIcon from "@mui/icons-material/Assignment";
-import GroupIcon from "@mui/icons-material/Group";
-import SettingsIcon from "@mui/icons-material/Settings";
-import LogoutIcon from "@mui/icons-material/Logout";
+  LayoutDashboard,
+  ClipboardList,
+  Users,
+  Settings,
+  LogOut,
+} from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 export default function Sidebar() {
@@ -21,113 +13,82 @@ export default function Sidebar() {
 
   const isActive = (path: string) => location.pathname === path;
 
-  const menuItemStyle = (path: string) => ({
-    borderRadius: 2,
-    mb: 0.5,
-    bgcolor: isActive(path) ? "#45207A" : "transparent",
-    "&:hover": {
-      bgcolor: "#3A1768",
-    },
-  });
+  const menuItemClasses = (path: string) =>
+    `flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition
+     ${
+       isActive(path)
+         ? "bg-[#45207A] text-white"
+         : "text-white hover:bg-[#3A1768]"
+     }`;
 
   return (
-    <Box
-      sx={{
-        width: 260,
-        height: "100vh",
-        position: "fixed",
-        bgcolor: "#2E0F59",
-        color: "#fff",
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
+    <aside className="fixed left-0 top-0 flex h-screen w-[260px] flex-col bg-[#2E0F59] text-white">
       {/* Logo */}
-      <Box px={3} py={3}>
-        <Typography fontSize={20} fontWeight={700}>
-          FedEx
-        </Typography>
-        <Typography fontSize={13} color="#cfc7ff">
-          DCA Management
-        </Typography>
-      </Box>
+      <div className="px-6 py-6">
+        <h1 className="text-xl font-bold">FedEx</h1>
+        <p className="text-xs text-[#cfc7ff]">DCA Management</p>
+      </div>
 
       {/* User */}
-      <Box px={3} py={2} display="flex" alignItems="center" gap={2}>
-        <Avatar sx={{ bgcolor: "#5b2db3" }}>P</Avatar>
-        <Box>
-          <Typography fontWeight={600}>Priya Sharma</Typography>
-          <Typography fontSize={12} color="#cfc7ff">
-            FedEx Team
-          </Typography>
-        </Box>
-      </Box>
+      <div className="flex items-center gap-3 px-6 py-4">
+        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#5b2db3] font-semibold">
+          P
+        </div>
 
-      <Divider sx={{ borderColor: "#40207a" }} />
+        <div>
+          <p className="text-sm font-semibold">Priya Sharma</p>
+          <p className="text-xs text-[#cfc7ff]">FedEx Team</p>
+        </div>
+      </div>
+
+      <div className="mx-4 my-2 h-px bg-[#40207a]" />
 
       {/* Menu */}
-      <List sx={{ px: 2, mt: 1 }}>
-        <ListItemButton
+      <nav className="flex flex-col gap-1 px-4">
+        <button
           onClick={() => navigate("/fedex/dashboard")}
-          selected={isActive("/fedex/dashboard")}
-          sx={menuItemStyle("/fedex/dashboard")}
+          className={menuItemClasses("/fedex/dashboard")}
         >
-          <ListItemIcon sx={{ color: "#fff" }}>
-            <DashboardIcon />
-          </ListItemIcon>
-          <ListItemText primary="Dashboard" />
-        </ListItemButton>
+          <LayoutDashboard className="h-4 w-4" />
+          Dashboard
+        </button>
 
-        <ListItemButton
+        <button
           onClick={() => navigate("/fedex/cases")}
-          selected={isActive("/fedex/cases")}
-          sx={menuItemStyle("/fedex/cases")}
+          className={menuItemClasses("/fedex/cases")}
         >
-          <ListItemIcon sx={{ color: "#fff" }}>
-            <AssignmentIcon />
-          </ListItemIcon>
-          <ListItemText primary="Case Management" />
-        </ListItemButton>
+          <ClipboardList className="h-4 w-4" />
+          Case Management
+        </button>
 
-        <ListItemButton
-          onClick={() => navigate("/fedex/dca")}
-          selected={isActive("/fedex/dca")}
-          sx={menuItemStyle("/fedex/dca")}
+        <button
+          onClick={() => navigate("/fedex/dca-assignment")}
+          className={menuItemClasses("/fedex/dca-assignment")}
         >
-          <ListItemIcon sx={{ color: "#fff" }}>
-            <GroupIcon />
-          </ListItemIcon>
-          <ListItemText primary="DCA Assignment" />
-        </ListItemButton>
+          <Users className="h-4 w-4" />
+          DCA Assignment
+        </button>
 
-        <ListItemButton
+        <button
           onClick={() => navigate("/fedex/settings")}
-          selected={isActive("/fedex/settings")}
-          sx={menuItemStyle("/fedex/settings")}
+          className={menuItemClasses("/fedex/settings")}
         >
-          <ListItemIcon sx={{ color: "#fff" }}>
-            <SettingsIcon />
-          </ListItemIcon>
-          <ListItemText primary="Settings" />
-        </ListItemButton>
-      </List>
+          <Settings className="h-4 w-4" />
+          Settings
+        </button>
+      </nav>
 
-      <Box flex={1} />
+      <div className="flex-1" />
 
       {/* Logout */}
-      <Box px={2} pb={2}>
-        <ListItemButton
-          sx={{
-            borderRadius: 2,
-            "&:hover": { bgcolor: "#3A1768" },
-          }}
+      <div className="px-4 pb-4">
+        <button
+          className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-white hover:bg-[#3A1768]"
         >
-          <ListItemIcon sx={{ color: "#fff" }}>
-            <LogoutIcon />
-          </ListItemIcon>
-          <ListItemText primary="Logout" />
-        </ListItemButton>
-      </Box>
-    </Box>
+          <LogOut className="h-4 w-4" />
+          Logout
+        </button>
+      </div>
+    </aside>
   );
 }

@@ -1,6 +1,4 @@
-import { Card, Box, Typography } from "@mui/material";
-import TrendingUpIcon from "@mui/icons-material/TrendingUp";
-import TrendingDownIcon from "@mui/icons-material/TrendingDown";
+import { TrendingUp, TrendingDown } from "lucide-react";
 
 export default function StatCard({
   title,
@@ -8,45 +6,46 @@ export default function StatCard({
   change,
   positive,
   icon,
-}: any) {
+}: {
+  title: string;
+  value: string | number;
+  change: string;
+  positive: boolean;
+  icon: React.ReactNode;
+}) {
   return (
-    <Card sx={{ p: 3, borderRadius: 3 }}>
-      <Box display="flex" justifyContent="space-between">
-        <Box>
-          <Typography fontSize={14} color="text.secondary">
-            {title}
-          </Typography>
-          <Typography fontSize={28} fontWeight={700}>
-            {value}
-          </Typography>
+    <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
+      <div className="flex items-start justify-between">
+        {/* Text */}
+        <div>
+          <p className="text-sm text-gray-500">{title}</p>
 
-          <Box display="flex" alignItems="center" mt={1}>
+          <p className="mt-1 text-3xl font-bold text-gray-900">
+            {value}
+          </p>
+
+          <div className="mt-2 flex items-center gap-1">
             {positive ? (
-              <TrendingUpIcon sx={{ color: "green", fontSize: 16 }} />
+              <TrendingUp className="h-4 w-4 text-green-600" />
             ) : (
-              <TrendingDownIcon sx={{ color: "red", fontSize: 16 }} />
+              <TrendingDown className="h-4 w-4 text-red-600" />
             )}
-            <Typography
-              fontSize={13}
-              ml={0.5}
-              color={positive ? "green" : "red"}
+
+            <span
+              className={`text-xs font-medium ${
+                positive ? "text-green-600" : "text-red-600"
+              }`}
             >
               {change} vs last week
-            </Typography>
-          </Box>
-        </Box>
+            </span>
+          </div>
+        </div>
 
-        <Box
-          sx={{
-            bgcolor: "#ede7f6",
-            p: 1.5,
-            borderRadius: 2,
-            height: 40,
-          }}
-        >
+        {/* Icon */}
+        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-100">
           {icon}
-        </Box>
-      </Box>
-    </Card>
+        </div>
+      </div>
+    </div>
   );
 }

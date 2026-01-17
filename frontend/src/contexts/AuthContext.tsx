@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { User, UserRole } from '../types/index'; // Use relative path to avoid @ errors
+import type { User, UserRole } from '@/types';
+
 
 interface AuthContextType {
   user: User | null;

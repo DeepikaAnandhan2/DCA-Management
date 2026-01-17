@@ -1,22 +1,14 @@
 import {
-  Box,
-  Typography,
-  Paper,
-  Grid,
-  TextField,
-  Button,
-  Switch,
-  Divider
-} from "@mui/material";
-import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
-import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
-import ShieldOutlinedIcon from "@mui/icons-material/ShieldOutlined";
-import MailOutlineIcon from "@mui/icons-material/MailOutline";
+  User,
+  Bell,
+  Shield,
+  Mail
+} from "lucide-react";
 
 function Row({
   title,
   subtitle,
-  value
+  value,
 }: {
   title: string;
   subtitle: string;
@@ -24,125 +16,131 @@ function Row({
 }) {
   return (
     <>
-      <Box display="flex" justifyContent="space-between" alignItems="center">
-        <Box>
-          <Typography fontWeight={600}>{title}</Typography>
-          <Typography fontSize={13} color="text.secondary">
-            {subtitle}
-          </Typography>
-        </Box>
-        <Switch checked={value} color="secondary" />
-      </Box>
-      <Divider sx={{ my: 2 }} />
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="font-semibold text-gray-900">{title}</p>
+          <p className="text-sm text-gray-500">{subtitle}</p>
+        </div>
+
+        <button
+          className={`relative inline-flex h-6 w-11 items-center rounded-full transition ${
+            value ? "bg-purple-700" : "bg-gray-300"
+          }`}
+        >
+          <span
+            className={`inline-block h-5 w-5 transform rounded-full bg-white transition ${
+              value ? "translate-x-5" : "translate-x-1"
+            }`}
+          />
+        </button>
+      </div>
+
+      <div className="my-4 h-px bg-gray-200" />
     </>
   );
 }
 
 export default function Settings() {
   return (
-    <Box sx={{ p: 4 }}>
+    <div className="p-6 md:p-8">
       {/* Page Header */}
-      <Typography variant="h4" fontWeight={700}>
+      <h1 className="text-2xl font-bold text-gray-900">
         Settings
-      </Typography>
-      <Typography color="text.secondary" sx={{ mb: 4 }}>
+      </h1>
+      <p className="mb-6 text-gray-500">
         Manage your account and system preferences
-      </Typography>
+      </p>
 
       {/* Profile */}
-      <Paper sx={{ p: 4, mb: 4 }}>
-        <Box display="flex" alignItems="center" mb={2}>
-          <PersonOutlineIcon sx={{ color: "#4b1d6f", mr: 1 }} />
-          <Typography variant="h6" fontWeight={600}>
+      <div className="mb-6 rounded-xl border border-gray-200 bg-white p-6">
+        <div className="mb-4 flex items-center gap-2">
+          <User className="text-purple-700" size={20} />
+          <h2 className="text-lg font-semibold">
             Profile Information
-          </Typography>
-        </Box>
+          </h2>
+        </div>
 
-        <Grid container spacing={3}>
-          <Grid item xs={12} md={6}>
-            <Typography fontWeight={600}>Full Name</Typography>
-            <TextField fullWidth value="Priya Sharma" />
-          </Grid>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          {[
+            ["Full Name", "Priya Sharma", false],
+            ["Email", "priya.sharma@fedex.com", false],
+            ["Role", "FedEx Supervisor", true],
+            ["Region", "Chennai, Tamil Nadu", true],
+          ].map(([label, value, disabled]) => (
+            <div key={label}>
+              <label className="mb-1 block text-sm font-semibold text-gray-700">
+                {label}
+              </label>
+              <input
+                disabled={disabled as boolean}
+                value={value as string}
+                className={`w-full rounded-lg border px-3 py-2 text-sm ${
+                  disabled
+                    ? "bg-gray-100 text-gray-500"
+                    : "border-gray-300 focus:border-purple-600 focus:outline-none"
+                }`}
+              />
+            </div>
+          ))}
+        </div>
 
-          <Grid item xs={12} md={6}>
-            <Typography fontWeight={600}>Email</Typography>
-            <TextField fullWidth value="priya.sharma@fedex.com" />
-          </Grid>
-
-          <Grid item xs={12} md={6}>
-            <Typography fontWeight={600}>Role</Typography>
-            <TextField fullWidth disabled value="FedEx Supervisor" />
-          </Grid>
-
-          <Grid item xs={12} md={6}>
-            <Typography fontWeight={600}>Region</Typography>
-            <TextField fullWidth disabled value="Chennai, Tamil Nadu" />
-          </Grid>
-        </Grid>
-
-        <Button
-          variant="contained"
-          sx={{
-            mt: 3,
-            bgcolor: "#3b1a5a",
-            "&:hover": { bgcolor: "#2e1446" },
-            textTransform: "none",
-            px: 4
-          }}
-        >
+        <button className="mt-4 rounded-lg bg-purple-800 px-6 py-2 text-sm font-medium text-white hover:bg-purple-900">
           Save Changes
-        </Button>
-      </Paper>
+        </button>
+      </div>
 
       {/* Notifications */}
-      <Paper sx={{ p: 4, mb: 4 }}>
-        <Box display="flex" alignItems="center" mb={2}>
-          <NotificationsNoneIcon sx={{ color: "#4b1d6f", mr: 1 }} />
-          <Typography variant="h6" fontWeight={600}>
+      <div className="mb-6 rounded-xl border border-gray-200 bg-white p-6">
+        <div className="mb-4 flex items-center gap-2">
+          <Bell className="text-purple-700" size={20} />
+          <h2 className="text-lg font-semibold">
             Notification Preferences
-          </Typography>
-        </Box>
+          </h2>
+        </div>
 
         <Row
           title="AI Alerts"
           subtitle="Alerts for AI-tagged high priority cases"
-          value={true}
+          value
         />
         <Row
           title="Daily Summary"
           subtitle="Receive daily case summary reports"
-          value={true}
+          value
         />
         <Row
           title="DCA Updates"
           subtitle="Notifications for DCA case updates"
           value={false}
         />
-      </Paper>
+      </div>
 
       {/* Security */}
-      <Paper sx={{ p: 4, mb: 4 }}>
-        <Box display="flex" alignItems="center" mb={2}>
-          <ShieldOutlinedIcon sx={{ color: "#4b1d6f", mr: 1 }} />
-          <Typography variant="h6" fontWeight={600}>
+      <div className="mb-6 rounded-xl border border-gray-200 bg-white p-6">
+        <div className="mb-4 flex items-center gap-2">
+          <Shield className="text-purple-700" size={20} />
+          <h2 className="text-lg font-semibold">
             Security
-          </Typography>
-        </Box>
+          </h2>
+        </div>
 
-        <Button variant="outlined">Change Password</Button>
-        <Typography fontSize={13} color="text.secondary" mt={2}>
+        <button className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-50">
+          Change Password
+        </button>
+
+        <p className="mt-2 text-sm text-gray-500">
           Last password change: 30 days ago
-        </Typography>
-      </Paper>
+        </p>
+      </div>
 
       {/* Email */}
-      <Paper sx={{ p: 4 }}>
-        <Box display="flex" alignItems="center" mb={2}>
-          <MailOutlineIcon sx={{ color: "#4b1d6f", mr: 1 }} />
-          <Typography variant="h6" fontWeight={600}>
+      <div className="rounded-xl border border-gray-200 bg-white p-6">
+        <div className="mb-4 flex items-center gap-2">
+          <Mail className="text-purple-700" size={20} />
+          <h2 className="text-lg font-semibold">
             Email Settings
-          </Typography>
-        </Box>
+          </h2>
+        </div>
 
         <Row
           title="Marketing Emails"
@@ -152,9 +150,9 @@ export default function Settings() {
         <Row
           title="System Emails"
           subtitle="Critical system notifications"
-          value={true}
+          value
         />
-      </Paper>
-    </Box>
+      </div>
+    </div>
   );
 }

@@ -7,7 +7,6 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { Paper, Typography, Box } from "@mui/material";
 
 const data = [
   { day: "Mon", value: 120 },
@@ -21,12 +20,14 @@ const data = [
 
 export default function OverdueTrendChart() {
   return (
-    <Paper sx={{ p: 3, height: 360, borderRadius: 3 }}>
-      <Typography fontWeight={600} mb={2}>
+    <div className="h-[360px] rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+      {/* Title */}
+      <h3 className="mb-4 text-sm font-semibold text-gray-800">
         Overdue Trend (Last 7 Days)
-      </Typography>
+      </h3>
 
-      <Box width="100%" height={280}>
+      {/* Chart */}
+      <div className="h-[280px] w-full">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data}>
             <CartesianGrid strokeDasharray="3 3" />
@@ -42,7 +43,7 @@ export default function OverdueTrendChart() {
             />
           </LineChart>
         </ResponsiveContainer>
-      </Box>
-    </Paper>
+      </div>
+    </div>
   );
 }

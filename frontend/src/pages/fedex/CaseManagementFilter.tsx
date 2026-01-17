@@ -1,15 +1,4 @@
-import {
-  Box,
-  TextField,
-  InputAdornment,
-  MenuItem,
-  Select,
-  FormControl,
-  OutlinedInput,
-  Typography,
-} from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
-import FilterListIcon from "@mui/icons-material/FilterList";
+import { Search, Filter } from "lucide-react";
 import { useState } from "react";
 
 export default function CaseManagementFilter() {
@@ -17,77 +6,47 @@ export default function CaseManagementFilter() {
   const [priority, setPriority] = useState("All Priority");
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        alignItems: "center",
-        gap: 2,
-        width: "100%",
-      }}
-    >
+    <div className="flex w-full items-center gap-4">
       {/* Search */}
-      <TextField
-        fullWidth
-        placeholder="Search by Case ID, Invoice ID, or Customer..."
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              <SearchIcon sx={{ color: "#9ca3af" }} />
-            </InputAdornment>
-          ),
-        }}
-        sx={{
-          background: "#fff",
-          borderRadius: 2,
-        }}
-      />
+      <div className="relative flex-1">
+        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+        <input
+          type="text"
+          placeholder="Search by Case ID, Invoice ID, or Customer..."
+          className="w-full rounded-lg border border-gray-300 bg-white py-2 pl-10 pr-3 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        />
+      </div>
 
       {/* Status Filter */}
-      <FormControl sx={{ minWidth: 170 }}>
-        <Select
+      <div className="relative min-w-[170px]">
+        <Filter className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+        <select
           value={status}
           onChange={(e) => setStatus(e.target.value)}
-          input={<OutlinedInput />}
-          sx={{
-            borderRadius: 2,
-            background: "#fff",
-          }}
-          startAdornment={
-            <InputAdornment position="start">
-              <FilterListIcon />
-            </InputAdornment>
-          }
+          className="w-full appearance-none rounded-lg border border-gray-300 bg-white py-2 pl-9 pr-8 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
         >
-          <MenuItem value="All Status">All Status</MenuItem>
-          <MenuItem value="Open">Open</MenuItem>
-          <MenuItem value="Approved">Approved</MenuItem>
-          <MenuItem value="Assigned">Assigned</MenuItem>
-          <MenuItem value="Closed">Closed</MenuItem>
-        </Select>
-      </FormControl>
+          <option>All Status</option>
+          <option>Open</option>
+          <option>Approved</option>
+          <option>Assigned</option>
+          <option>Closed</option>
+        </select>
+      </div>
 
       {/* Priority Filter */}
-      <FormControl sx={{ minWidth: 170 }}>
-        <Select
+      <div className="relative min-w-[170px]">
+        <Filter className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+        <select
           value={priority}
           onChange={(e) => setPriority(e.target.value)}
-          input={<OutlinedInput />}
-          sx={{
-            borderRadius: 2,
-            background: "#fff",
-          }}
-          startAdornment={
-            <InputAdornment position="start">
-              <FilterListIcon />
-            </InputAdornment>
-          }
+          className="w-full appearance-none rounded-lg border border-gray-300 bg-white py-2 pl-9 pr-8 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
         >
-          <MenuItem value="All Priority">All Priority</MenuItem>
-          <MenuItem value="High">High</MenuItem>
-          <MenuItem value="Medium">Medium</MenuItem>
-          <MenuItem value="Low">Low</MenuItem>
-        </Select>
-      </FormControl>
-    </Box>
+          <option>All Priority</option>
+          <option>High</option>
+          <option>Medium</option>
+          <option>Low</option>
+        </select>
+      </div>
+    </div>
   );
 }
