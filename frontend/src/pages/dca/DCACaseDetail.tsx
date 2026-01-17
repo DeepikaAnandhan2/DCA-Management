@@ -8,6 +8,8 @@ import {
   Check,
   X
 } from "lucide-react";
+
+//Integrating backend API cases list
 import { CaseTimeline } from "@/components/common/CaseTimeline";
 import {
   getCaseDetail,
