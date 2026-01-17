@@ -1,5 +1,5 @@
 import React from 'react';
-import { TimelineEvent } from '@/types';
+import type { TimelineEvent } from '@/types';
 import { cn } from '@/lib/utils';
 import { Check, Circle } from 'lucide-react';
 

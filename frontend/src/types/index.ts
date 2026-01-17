@@ -1,3 +1,4 @@
+// src/types/index.ts
 export type UserRole = 'fedex' | 'dca';
 
 export interface User {
@@ -8,7 +9,7 @@ export interface User {
   avatar?: string;
 }
 
-export type CaseStatus = 'OPEN' | 'APPROVED' | 'ASSIGNED' | 'CLOSED';
+export type CaseStatus = 'OPEN' | 'APPROVED' | 'ASSIGNED' | 'CLOSED' | string;
 export type CasePriority = 'HIGH' | 'MEDIUM' | 'LOW';
 
 export interface TimelineEvent {
@@ -21,12 +22,12 @@ export interface TimelineEvent {
 
 export interface Case {
   id: string;
-  invoiceId: string; // Use this instead of caseId
+  invoiceId: string;
   customerName: string;
   customerEmail: string;
   customerPhone: string;
   customerAddress: string;
-  amountDue: number; // Use this instead of amount
+  amountDue: number;
   overdueDays: number;
   aiPriority: CasePriority;
   aiRiskScore: number;
@@ -36,5 +37,4 @@ export interface Case {
   createdAt: string;
   notes: string[];
   timeline: TimelineEvent[];
-  
 }

@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { StatusBadge } from '@/components/common/StatusBadge';
 import { mockCases } from '@/data/mockData';
-import { Case } from '@/types';
+import type { Case } from '@/types';
 
 export const DCACaseList: React.FC = () => {
   const navigate = useNavigate();

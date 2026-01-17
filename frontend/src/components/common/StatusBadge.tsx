@@ -1,16 +1,6 @@
 import React from 'react';
+import type { CaseStatus } from '@/types';
 import { cn } from '@/lib/utils';
-
-/**
- * Allowed case statuses coming from backend / UI
- * (kept flexible to avoid runtime crashes)
- */
-export type CaseStatus =
-  | 'OPEN'
-  | 'APPROVED'
-  | 'ASSIGNED'
-  | 'CLOSED'
-  | string; // 👈 important: allows unknown values safely
 
 interface StatusBadgeProps {
   status: CaseStatus;
