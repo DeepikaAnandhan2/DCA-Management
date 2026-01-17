@@ -1,123 +1,169 @@
-import React, { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Clock, MessageSquare, CheckCircle, Check, X } from 'lucide-react';
-import { mockCases } from '@/data/mockData';
-import { CaseTimeline } from '@/components/common/CaseTimeline';
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import {
+  ArrowLeft,
+  Clock,
+  MessageSquare,
+  CheckCircle,
+  Check,
+  X
+} from "lucide-react";
+import { CaseTimeline } from "@/components/common/CaseTimeline";
+import {
+  getCaseDetail,
+  getCaseHistory,
+  markCasePaid,
+  addCaseNote
+} from "@/api/cases";
 
-export const DCACaseDetail: React.FC = () => {
+export const DCACaseDetail = () => {
   const { caseId } = useParams();
   const navigate = useNavigate();
+
+  const [caseData, setCaseData] = useState(null);
+  const [timeline, setTimeline] = useState([]);
+  const [loading, setLoading] = useState(true);
+
   const [showNotesModal, setShowNotesModal] = useState(false);
   const [showPaidSuccess, setShowPaidSuccess] = useState(false);
-  const [noteContent, setNoteContent] = useState('');
+  const [noteContent, setNoteContent] = useState("");
 
-  const caseData = mockCases.find((c) => c.id === caseId);
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const [caseRes, historyRes] = await Promise.all([
+          getCaseDetail(caseId),
+          getCaseHistory(caseId)
+        ]);
 
-  if (!caseData) return <div className="p-10 text-center font-bold">Case not found</div>;
+        setCaseData(caseRes);
+        setTimeline(historyRes);
+      } catch (err) {
+        alert(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const handleMarkAsPaid = () => {
+    loadData();
+  }, [caseId]);
 
-    setShowPaidSuccess(true);
-    setTimeout(() => setShowPaidSuccess(false), 3000);
+  const handleMarkAsPaid = async () => {
+    try {
+      await markCasePaid(caseId);
+      setShowPaidSuccess(true);
+
+      setTimeout(() => setShowPaidSuccess(false), 3000);
+
+      setCaseData({ ...caseData, status: "PAID" });
+    } catch (err) {
+      alert(err.message);
+    }
   };
+
+  const handleSaveNote = async () => {
+    try {
+      await addCaseNote(caseId, noteContent);
+      setNoteContent("");
+      setShowNotesModal(false);
+
+      const updatedHistory = await getCaseHistory(caseId);
+      setTimeline(updatedHistory);
+    } catch (err) {
+      alert(err.message);
+    }
+  };
+
+  if (loading) return <div className="p-10 font-bold">Loading...</div>;
+  if (!caseData) return <div className="p-10 font-bold">Case not found</div>;
 
   return (
     <div className="p-8 space-y-6 relative min-h-screen">
-      {/* SUCCESS NOTIFICATION */}
       {showPaidSuccess && (
-        <div className="fixed top-10 right-10 z-[100] bg-emerald-600 text-white px-6 py-4 rounded-xl shadow-2xl flex items-center gap-3 animate-in fade-in slide-in-from-top-4">
-          <Check size={20} className="bg-white/20 rounded-full p-1" />
-          <p className="font-bold">Payment completed successfully!</p>
+        <div className="fixed top-10 right-10 bg-emerald-600 text-white px-6 py-4 rounded-xl flex items-center gap-3">
+          <Check size={20} /> Payment completed successfully!
         </div>
       )}
 
-      {/* HEADER ACTIONS */}
       <div className="flex justify-between items-center">
-        <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-slate-500 font-bold hover:text-[#4D148C] transition-colors">
+        <button
+          onClick={() => navigate(-1)}
+          className="flex items-center gap-2 font-bold text-slate-500"
+        >
           <ArrowLeft size={18} /> Back
         </button>
+
         <div className="flex gap-3">
-          <button 
+          <button
             onClick={() => setShowNotesModal(true)}
-            className="flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-200 rounded-xl font-bold text-slate-700 hover:bg-slate-50 transition-all"
+            className="px-5 py-2.5 bg-white border rounded-xl font-bold"
           >
-            <MessageSquare size={18} className="text-[#4D148C]" /> Notes
+            <MessageSquare size={18} /> Notes
           </button>
-          <button 
-            onClick={handleMarkAsPaid}
-            className="flex items-center gap-2 px-5 py-2.5 bg-[#4D148C] text-white rounded-xl font-bold hover:bg-[#3b0f6e] shadow-lg shadow-purple-100 transition-all"
-          >
-            <CheckCircle size={18} /> Mark as Paid
-          </button>
+
+          {caseData.status === "ASSIGNED" && (
+            <button
+              onClick={handleMarkAsPaid}
+              className="px-5 py-2.5 bg-[#4D148C] text-white rounded-xl font-bold"
+            >
+              <CheckCircle size={18} /> Mark as Paid
+            </button>
+          )}
         </div>
       </div>
 
-      <h1 className="text-4xl font-black text-slate-900">{caseData.invoiceId}</h1>
+      <h1 className="text-4xl font-black">{caseData.invoice_id}</h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-6">
-          {/* SLA BREACH TIMELINE */}
-          <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm">
+          <div className="bg-white p-8 rounded-3xl border">
             <div className="flex items-center gap-2 mb-4">
-              <Clock size={20} className="text-[#FF6600]" />
-              <h3 className="font-bold text-slate-800">SLA Breach Timeline</h3>
+              <Clock size={20} className="text-orange-500" />
+              <h3 className="font-bold">SLA Status</h3>
             </div>
-            <div className="w-full bg-slate-100 h-3 rounded-full overflow-hidden mb-2">
-              <div className="bg-rose-500 h-full transition-all duration-1000" style={{ width: '85%' }} />
-            </div>
-            <p className="text-xs font-black text-rose-500 uppercase tracking-widest">Warning: SLA Breach in 2 days</p>
+            <p className="font-bold text-sm">
+              SLA Due: {new Date(caseData.sla_due_at).toLocaleString()}
+            </p>
           </div>
 
-          <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm">
-            <h3 className="font-bold text-slate-800 mb-6">Case Details</h3>
-            <div className="grid grid-cols-2 gap-8">
-              <div>
-                <p className="text-[10px] uppercase font-black text-slate-400 tracking-widest mb-1">Customer</p>
-                <p className="text-lg font-bold text-slate-900">{caseData.customerName}</p>
-              </div>
-              <div>
-                <p className="text-[10px] uppercase font-black text-slate-400 tracking-widest mb-1">Amount Due</p>
-                <p className="text-lg font-black text-slate-900">₹{caseData.amountDue.toLocaleString()}</p>
-              </div>
-            </div>
+          <div className="bg-white p-8 rounded-3xl border">
+            <h3 className="font-bold mb-6">Case Details</h3>
+            <p><b>Customer:</b> {caseData.customer_name}</p>
+            <p><b>Amount Due:</b> ₹{caseData.amount_due}</p>
+            <p><b>Status:</b> {caseData.status}</p>
           </div>
         </div>
 
-        {/* CASE HISTORY TIMELINE */}
-        <div className="bg-white p-8 rounded-3xl border border-slate-100 shadow-sm">
-          <h3 className="font-bold text-slate-800 mb-6">Case History Timeline</h3>
-          <CaseTimeline events={caseData.timeline} />
+        <div className="bg-white p-8 rounded-3xl border">
+          <h3 className="font-bold mb-6">Case History</h3>
+          <CaseTimeline events={timeline} />
         </div>
       </div>
 
-      {/* NOTES MODAL */}
       {showNotesModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
-          <div className="bg-white w-full max-w-md rounded-[32px] shadow-2xl overflow-hidden animate-in zoom-in-95">
-            <div className="p-6 bg-[#4D148C] text-white flex justify-between items-center">
-              <h3 className="font-bold">Add Recovery Note</h3>
-              <button onClick={() => setShowNotesModal(false)} className="hover:bg-white/10 p-1 rounded-full"><X size={20}/></button>
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center">
+          <div className="bg-white w-full max-w-md rounded-3xl">
+            <div className="p-6 bg-[#4D148C] text-white flex justify-between">
+              <h3>Add Recovery Note</h3>
+              <button onClick={() => setShowNotesModal(false)}>
+                <X />
+              </button>
             </div>
-            <div className="p-8 space-y-4">
-              <textarea 
-                className="w-full h-40 p-4 border border-slate-100 rounded-2xl outline-none focus:ring-2 focus:ring-purple-100 transition-all font-medium text-sm"
-                placeholder="Enter latest recovery update notes..."
+            <div className="p-6">
+              <textarea
                 value={noteContent}
                 onChange={(e) => setNoteContent(e.target.value)}
+                className="w-full h-40 border rounded-xl p-4"
               />
-              <button 
-                onClick={() => {
-                  setShowNotesModal(false);
-                  setNoteContent('');
-                }}
-                className="w-full py-4 bg-[#4D148C] text-white font-bold rounded-2xl hover:bg-[#3b0f6e] transition-all"
+              <button
+                onClick={handleSaveNote}
+                className="w-full mt-4 bg-[#4D148C] text-white py-3 rounded-xl font-bold"
               >
                 Save Note
               </button>
             </div>
           </div>
         </div>
-        
       )}
     </div>
   );
