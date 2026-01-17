@@ -1,8 +1,10 @@
 from datetime import datetime, timedelta
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from app.core.auth import require_fedex
-from app.core.auth import require_dca
+
+# Internal Imports
+from app.schemas.case import CaseNoteRequest
+from app.core.auth import require_fedex, require_dca, require_fedex_or_dca
 from app.core.audit import log_case_action
 from app.core.database import get_db
 from app.models.case import Case
@@ -12,13 +14,28 @@ from app.models.case_audit_log import CaseAuditLog
 router = APIRouter(prefix="/cases", tags=["Cases"])
 
 # =========================
-# LIST ALL CASES HISTORY(AUDIT LOG)
+#  GET CASE DETAIL (DCA / FEDEX)
 # =========================
+@router.get("/{case_id}")
+def get_case_detail(
+    case_id: int,
+    db: Session = Depends(get_db),
+    payload: dict = Depends(require_fedex_or_dca)
+):
+    case = db.query(Case).filter(Case.id == case_id).first()
+    if not case:
+        raise HTTPException(status_code=404, detail="Case not found")
+    return case
+
+# =========================
+# LIST ALL CASES HISTORY (AUDIT LOG)
+# =========================
+
 @router.get("/{case_id}/history")
 def case_history(
     case_id: int,
     db: Session = Depends(get_db),
-    _: str = Depends(require_fedex)
+    _: dict = Depends(require_fedex_or_dca)
 ):
     return (
         db.query(CaseAuditLog)
@@ -30,14 +47,20 @@ def case_history(
 # LIST ALL CASES
 # =========================
 @router.get("/")
-def list_cases(db: Session = Depends(get_db)):
+def list_cases(
+    db: Session = Depends(get_db),
+    payload: dict = Depends(require_fedex_or_dca)
+):
     return db.query(Case).all()
 
 # =========================
 #  SLA BREACH CHECKER
 # =========================
 @router.get("/sla/breached")
-def breached_cases(db: Session = Depends(get_db)):
+def breached_cases(
+    db: Session = Depends(get_db),
+    payload: dict = Depends(require_fedex)
+):
     now = datetime.utcnow()
     return db.query(Case).filter(
         Case.sla_due_at != None,
@@ -46,11 +69,13 @@ def breached_cases(db: Session = Depends(get_db)):
     ).all()
 
 # =========================
-# SLA ALERT
+# SLA ALERT (24H Warning)
 # =========================
-
 @router.get("/sla/warning")
-def sla_warning_cases(db: Session = Depends(get_db)):
+def sla_warning_cases(
+    db: Session = Depends(get_db),
+    payload: dict = Depends(require_fedex)
+):
     now = datetime.utcnow()
     warning_time = now + timedelta(hours=24)
 
@@ -60,23 +85,26 @@ def sla_warning_cases(db: Session = Depends(get_db)):
         Case.status == "ASSIGNED"
     ).all()
 
-
 # =========================
 # PRIORITY LEVEL (FedEx)
 # =========================
-
 @router.get("/priority/{level}")
-def cases_by_priority(level: str, db: Session = Depends(get_db)):
+def cases_by_priority(
+    level: str, 
+    db: Session = Depends(get_db),
+    payload: dict = Depends(require_fedex)
+):
     level = level.upper()
-
     if level not in ["HIGH", "MEDIUM", "LOW"]:
         raise HTTPException(status_code=400, detail="Invalid priority level")
 
     return db.query(Case).filter(Case.priority == level).all()
 
-
 @router.get("/dashboard")
-def fedex_dashboard(db: Session = Depends(get_db)):
+def fedex_dashboard(
+    db: Session = Depends(get_db),
+    payload: dict = Depends(require_fedex)
+):
     return (
         db.query(Case)
         .order_by(
@@ -85,22 +113,25 @@ def fedex_dashboard(db: Session = Depends(get_db)):
         )
         .all()
     )
+
 @router.get("/dca/my-cases")
 def dca_cases(
     db: Session = Depends(get_db),
-    _: str = Depends(require_dca)
+    payload: dict = Depends(require_dca)
 ):
     return db.query(Case).filter(
         Case.status == "ASSIGNED"
     ).all()
 
-
-
 # =========================
 #  APPROVE CASE (FedEx)
 # =========================
 @router.post("/{case_id}/approve")
-def approve_case(case_id: int, db: Session = Depends(get_db), _: str = Depends(require_fedex)  ):
+def approve_case(
+    case_id: int, 
+    db: Session = Depends(get_db), 
+    payload: dict = Depends(require_fedex)
+):
     case = db.query(Case).filter(Case.id == case_id).first()
     if not case:
         raise HTTPException(status_code=404, detail="Case not found")
@@ -130,7 +161,12 @@ def approve_case(case_id: int, db: Session = Depends(get_db), _: str = Depends(r
 #  ASSIGN CASE TO DCA
 # =========================
 @router.post("/{case_id}/assign/{dca_id}")
-def assign_case(case_id: int, dca_id: int, db: Session = Depends(get_db)):
+def assign_case(
+    case_id: int, 
+    dca_id: int, 
+    db: Session = Depends(get_db),
+    payload: dict = Depends(require_fedex)
+):
     case = db.query(Case).filter(Case.id == case_id).first()
     if not case:
         raise HTTPException(status_code=404, detail="Case not found")
@@ -151,13 +187,12 @@ def assign_case(case_id: int, dca_id: int, db: Session = Depends(get_db)):
     case.status = "ASSIGNED"
 
     log_case_action(
-    db,
-    case_id=case.id,
-    action="ASSIGNED",
-    performed_by="FEDEX",
-    remarks=f"Assigned to DCA ID {dca.id}"
+        db,
+        case_id=case.id,
+        action="ASSIGNED",
+        performed_by="FEDEX",
+        remarks=f"Assigned to DCA ID {dca.id}"
     )
-
 
     db.commit()
 
@@ -172,7 +207,11 @@ def assign_case(case_id: int, dca_id: int, db: Session = Depends(get_db)):
 #  ESCALATE CASE
 # =========================
 @router.post("/{case_id}/escalate")
-def escalate_case(case_id: int, db: Session = Depends(get_db)):
+def escalate_case(
+    case_id: int, 
+    db: Session = Depends(get_db),
+    payload: dict = Depends(require_fedex)
+):
     case = db.query(Case).filter(Case.id == case_id).first()
     if not case:
         raise HTTPException(status_code=404, detail="Case not found")
@@ -180,11 +219,11 @@ def escalate_case(case_id: int, db: Session = Depends(get_db)):
     case.status = "ESCALATED"
 
     log_case_action(
-    db,
-    case_id=case.id,
-    action="ESCALATED",
-    performed_by="FEDEX",
-    remarks="Manual escalation"
+        db,
+        case_id=case.id,
+        action="ESCALATED",
+        performed_by="FEDEX",
+        remarks="Manual escalation"
     )
 
     db.commit()
@@ -195,7 +234,10 @@ def escalate_case(case_id: int, db: Session = Depends(get_db)):
     }
 
 @router.post("/sla/auto-escalate")
-def auto_escalate_cases(db: Session = Depends(get_db)):
+def auto_escalate_cases(
+    db: Session = Depends(get_db),
+    payload: dict = Depends(require_fedex)
+):
     now = datetime.utcnow()
     breached = db.query(Case).filter(
         Case.sla_due_at < now,
@@ -204,19 +246,80 @@ def auto_escalate_cases(db: Session = Depends(get_db)):
 
     for case in breached:
         case.status = "ESCALATED"
-
-    log_case_action(
-    db,
-    case_id=case.id,
-    action="AUTO_ESCALATED",
-    performed_by="SYSTEM",
-    remarks="SLA breached"
-    )
-
+        log_case_action(
+            db,
+            case_id=case.id,
+            action="AUTO_ESCALATED",
+            performed_by="SYSTEM",
+            remarks="SLA breached"
+        )
 
     db.commit()
-
     return {
         "message": "Auto escalation completed",
         "escalated_cases": len(breached)
     }
+
+# =========================
+#  MARK CASE AS PAID (DCA)
+# =========================
+@router.post("/{case_id}/mark-paid")
+def mark_case_paid(
+    case_id: int,
+    db: Session = Depends(get_db),
+    payload: dict = Depends(require_dca)
+):
+    case = db.query(Case).filter(Case.id == case_id).first()
+    if not case:
+        raise HTTPException(status_code=404, detail="Case not found")
+
+    if case.status != "ASSIGNED":
+        raise HTTPException(
+            status_code=400,
+            detail="Only assigned cases can be marked as paid"
+        )
+
+    case.status = "PAID"
+    case.closed_at = datetime.utcnow()
+
+    log_case_action(
+        db,
+        case_id=case.id,
+        action="PAID",
+        performed_by="DCA",
+        remarks="Payment collected and case closed"
+    )
+
+    db.commit()
+
+    return {
+        "message": "Case marked as paid",
+        "case_id": case.id,
+        "closed_at": case.closed_at
+    }
+
+# =========================
+#  ADD CASE NOTE (DCA)
+# =========================
+@router.post("/{case_id}/notes")
+def add_case_note(
+    case_id: int,
+    payload: CaseNoteRequest, # The JSON body
+    db: Session = Depends(get_db),
+    auth_user: dict = Depends(require_dca) # The JWT role check
+):
+    case = db.query(Case).filter(Case.id == case_id).first()
+    if not case:
+        raise HTTPException(status_code=404, detail="Case not found")
+
+    log_case_action(
+        db,
+        case_id=case.id,
+        action="NOTE_ADDED",
+        performed_by="DCA",
+        remarks=payload.note
+    )
+
+    db.commit()
+
+    return {"message": "Note added successfully"}

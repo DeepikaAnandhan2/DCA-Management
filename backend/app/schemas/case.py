@@ -12,3 +12,6 @@ class CaseResponse(CaseCreate):
 
     class Config:
         from_attributes = True
+
+class CaseNoteRequest(BaseModel):
+    note: str
