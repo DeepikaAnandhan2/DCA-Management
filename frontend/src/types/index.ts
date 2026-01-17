@@ -9,7 +9,7 @@ export interface User {
   avatar?: string;
 }
 
-export type CaseStatus = 'OPEN' | 'APPROVED' | 'ASSIGNED' | 'CLOSED';
+export type CaseStatus = 'OPEN' | 'APPROVED' | 'ASSIGNED' | 'CLOSED' | string;
 export type CasePriority = 'HIGH' | 'MEDIUM' | 'LOW';
 
 export interface TimelineEvent {
