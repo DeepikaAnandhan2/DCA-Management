@@ -1,5 +1,6 @@
-import { Routes, Route, Navigate } from "react-router-dom";
-import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+// Path corrected to 'contexts' as per your folder structure
+import { AuthProvider, useAuth } from "./contexts/AuthContext"; 
 
 // Layouts
 import { DCALayout } from "./components/layout/DCALayout";
@@ -72,3 +73,5 @@ export default function App() {
     </AuthProvider>
   );
 }
+
+export default App;

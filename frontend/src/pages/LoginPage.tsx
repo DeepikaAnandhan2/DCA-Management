@@ -1,18 +1,36 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { Box, Briefcase, Building2, ArrowRight } from 'lucide-react';
+import { Box, Briefcase, Building2, ArrowRight, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+
+type Role = "fedex" | "dca";
 
 const LoginPage: React.FC = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
-  const [selectedRole, setSelectedRole] = useState<'fedex' | 'dca' | null>(null);
+  
+  const [email, setEmail] = useState("");
+  const [selectedRole, setSelectedRole] = useState<Role | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  const handleContinue = () => {
-    if (selectedRole) {
-      login(selectedRole);
+  const handleContinue = async () => {
+    if (!email || !selectedRole) {
+      alert("Please enter your email and select a role");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      // Calls the login function from AuthContext
+      await login(email, selectedRole);
+      // Navigates based on the selected role
       navigate(selectedRole === 'dca' ? '/dca' : '/fedex');
+    } catch (err: any) {
+      alert(err.message || "Login failed. Please check your credentials.");
+      console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -62,84 +80,107 @@ const LoginPage: React.FC = () => {
 
       {/* RIGHT SIDE: Selection Login */}
       <div className="flex-1 bg-white p-8 md:p-16 flex flex-col justify-center items-center">
-        <div className="w-full max-w-md space-y-10">
+        <div className="w-full max-w-md space-y-8">
           <div className="text-center space-y-2">
             <h2 className="text-3xl font-black text-slate-900">Welcome Back</h2>
-            <p className="text-slate-400 font-medium">Select your role to continue</p>
+            <p className="text-slate-400 font-medium">Enter details and select your role</p>
           </div>
 
           <div className="space-y-4">
-            {/* FedEx Role Option */}
-            <button
-              onClick={() => setSelectedRole('fedex')}
-              className={cn(
-                "w-full flex items-center justify-between p-6 rounded-[24px] border-2 transition-all duration-300 text-left",
-                selectedRole === 'fedex' 
-                  ? "border-[#4D148C] bg-purple-50/50 ring-4 ring-purple-50" 
-                  : "border-slate-100 hover:border-slate-200"
-              )}
-            >
-              <div className="flex items-center gap-5">
-                <div className="bg-[#4D148C] p-3 rounded-2xl text-white">
-                  <Building2 size={24} />
-                </div>
-                <div>
-                  <p className="font-bold text-slate-900 text-lg leading-tight">FedEx Internal Team</p>
-                  <p className="text-sm text-slate-400 font-medium">Admin & Supervisor Access</p>
-                </div>
-              </div>
-              <div className={cn(
-                "w-6 h-6 rounded-full border-2 transition-all flex items-center justify-center",
-                selectedRole === 'fedex' ? "border-[#4D148C]" : "border-slate-200"
-              )}>
-                {selectedRole === 'fedex' && <div className="w-3 h-3 bg-[#4D148C] rounded-full" />}
-              </div>
-            </button>
+            {/* Email Input Integration */}
+            <div className="space-y-2">
+              <label className="text-sm font-bold text-slate-700 ml-1">Email Address</label>
+              <input
+                type="email"
+                placeholder="name@company.com"
+                className="w-full p-4 rounded-2xl bg-slate-50 border-2 border-slate-100 outline-none focus:border-[#4D148C] transition-all text-slate-900 font-medium"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
 
-            {/* DCA Role Option */}
-            <button
-              onClick={() => setSelectedRole('dca')}
-              className={cn(
-                "w-full flex items-center justify-between p-6 rounded-[24px] border-2 transition-all duration-300 text-left",
-                selectedRole === 'dca' 
-                  ? "border-[#4D148C] bg-purple-50/50 ring-4 ring-purple-50" 
-                  : "border-slate-100 hover:border-slate-200"
-              )}
-            >
-              <div className="flex items-center gap-5">
-                <div className="bg-[#4D148C] p-3 rounded-2xl text-white">
-                  <Briefcase size={24} />
+            <div className="grid grid-cols-1 gap-4">
+              {/* FedEx Role Option */}
+              <button
+                onClick={() => setSelectedRole('fedex')}
+                className={cn(
+                  "w-full flex items-center justify-between p-5 rounded-[24px] border-2 transition-all duration-300 text-left",
+                  selectedRole === 'fedex' 
+                    ? "border-[#4D148C] bg-purple-50/50 ring-4 ring-purple-50" 
+                    : "border-slate-100 hover:border-slate-200"
+                )}
+              >
+                <div className="flex items-center gap-4">
+                  <div className="bg-[#4D148C] p-2.5 rounded-xl text-white">
+                    <Building2 size={20} />
+                  </div>
+                  <div>
+                    <p className="font-bold text-slate-900 text-base leading-tight">FedEx Team</p>
+                    <p className="text-xs text-slate-400 font-medium">Internal Access</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="font-bold text-slate-900 text-lg leading-tight">DCA Agency Portal</p>
-                  <p className="text-sm text-slate-400 font-medium">Debt Collection Agency Access</p>
+                <div className={cn(
+                  "w-5 h-5 rounded-full border-2 transition-all flex items-center justify-center",
+                  selectedRole === 'fedex' ? "border-[#4D148C]" : "border-slate-200"
+                )}>
+                  {selectedRole === 'fedex' && <div className="w-2.5 h-2.5 bg-[#4D148C] rounded-full" />}
                 </div>
-              </div>
-              <div className={cn(
-                "w-6 h-6 rounded-full border-2 transition-all flex items-center justify-center",
-                selectedRole === 'dca' ? "border-[#4D148C]" : "border-slate-200"
-              )}>
-                {selectedRole === 'dca' && <div className="w-3 h-3 bg-[#4D148C] rounded-full" />}
-              </div>
-            </button>
+              </button>
+
+              {/* DCA Role Option */}
+              <button
+                onClick={() => setSelectedRole('dca')}
+                className={cn(
+                  "w-full flex items-center justify-between p-5 rounded-[24px] border-2 transition-all duration-300 text-left",
+                  selectedRole === 'dca' 
+                    ? "border-[#4D148C] bg-purple-50/50 ring-4 ring-purple-50" 
+                    : "border-slate-100 hover:border-slate-200"
+                )}
+              >
+                <div className="flex items-center gap-4">
+                  <div className="bg-[#4D148C] p-2.5 rounded-xl text-white">
+                    <Briefcase size={20} />
+                  </div>
+                  <div>
+                    <p className="font-bold text-slate-900 text-base leading-tight">DCA Agency</p>
+                    <p className="text-xs text-slate-400 font-medium">External Access</p>
+                  </div>
+                </div>
+                <div className={cn(
+                  "w-5 h-5 rounded-full border-2 transition-all flex items-center justify-center",
+                  selectedRole === 'dca' ? "border-[#4D148C]" : "border-slate-200"
+                )}>
+                  {selectedRole === 'dca' && <div className="w-2.5 h-2.5 bg-[#4D148C] rounded-full" />}
+                </div>
+              </button>
+            </div>
           </div>
 
-          <div className="space-y-6">
+          <div className="space-y-6 pt-2">
             <button
-              disabled={!selectedRole}
+              disabled={!selectedRole || !email || loading}
               onClick={handleContinue}
               className={cn(
                 "w-full py-5 rounded-2xl font-bold text-white shadow-xl transition-all flex items-center justify-center gap-2",
-                selectedRole 
-                  ? "bg-[#4D148C] hover:bg-[#3b0f6e] active:scale-95 translate-y-0" 
-                  : "bg-slate-200 cursor-not-allowed translate-y-0"
+                selectedRole && email && !loading
+                  ? "bg-[#4D148C] hover:bg-[#3b0f6e] active:scale-95" 
+                  : "bg-slate-200 cursor-not-allowed"
               )}
             >
-              Continue to Dashboard <ArrowRight size={20} />
+              {loading ? (
+                <>
+                  <Loader2 className="animate-spin" size={20} />
+                  Signing in...
+                </>
+              ) : (
+                <>
+                  Continue to Dashboard <ArrowRight size={20} />
+                </>
+              )}
             </button>
 
-            <p className="text-center text-[11px] text-slate-400 font-medium">
-              Chennai, Tamil Nadu, India • FedEx Express
+            <p className="text-center text-[11px] text-slate-400 font-medium uppercase tracking-widest">
+              Chennai, Tamil Nadu • FedEx Express
             </p>
           </div>
         </div>
@@ -147,6 +188,5 @@ const LoginPage: React.FC = () => {
     </div>
   );
 };
-
 
 export default LoginPage;
